@@ -36,7 +36,7 @@ class WebSocketServer:
         for i in (network.AP_IF, network.STA_IF):
             iface = network.WLAN(i)
             if iface.active():
-                print("WebSocket started on ws://%s:%d" % (iface.ifconfig()[0], port))
+                #print("WebSocket started on ws://%s:%d" % (iface.ifconfig()[0], port))
                 self.ip = iface.ifconfig()[0]
 
     def _accept_conn(self, listen_sock):
@@ -85,17 +85,17 @@ class WebSocketServer:
         self._listen_s = None
         for client in self._clients:
             client.connection.close()
-        print("Stopped WebSocket server.")
+        #print("Stopped WebSocket server.")
 
     def start(self, port=80):
         if self._listen_s:
             self.stop()
         self._setup_conn(port, self._accept_conn)
-        print("Started WebSocket server.")
+        #print("Started WebSocket server.")
 
-    def process_all(self, pitch, roll, tilt, in_temp, outside_temp):
+    def process_all(self, pitch, roll, tilt):
         for client in self._clients:
-            client.process(pitch, roll, tilt, in_temp, outside_temp)
+            client.process(pitch, roll, tilt)
 
     def send_something(self):
         for client in self._clients:
@@ -135,7 +135,6 @@ class ValueGenerator(WebSocketClient):
     def __init__(self, conn):
         super().__init__(conn)
 
-    def process(self, pitch, roll, tilt, in_temp, outside_temp):
+    def process(self, pitch, roll, tilt):
         # Write the pitch and roll angles to the WebSocket connection
-        self.connection.write(f"{pitch},{roll},{tilt},{in_temp},{outside_temp}")
-
+        self.connection.write("{:.2f},{:.2f},{:.2f}".format(pitch, roll, tilt))

@@ -10,11 +10,9 @@ import ssd1306
 from ws_connection import ClientClosedError
 from ws_server import AppServer, ValueGenerator
 from ota import OTAUpdater
+from secrets import SSID, PASSWORD
 
-# Define the Wi-Fi network SSID and password
-ssid = 'Jacob'
-password = 'Direstraits'
-firmware_url = "https://raw.githubusercontent.com/Nilsson-brothers/caravan-leveler/"
+firmware_url = "https://raw.githubusercontent.com/Jacnil98/caravan/main/"
 # Defines pixels on OLED display
 oled_width = 128
 oled_height = 64
@@ -47,8 +45,9 @@ pin.value(1) #while OLED is running, must set GPIO16 in high
 screen_btn = Pin(18, Pin.IN, Pin.PULL_DOWN)
 ota_btn = Pin(22, Pin.IN, Pin.PULL_DOWN)
 # Setup the server
-server = AppServer(ssid, password)
+server = AppServer(SSID, PASSWORD)
 ota_updater = OTAUpdater(firmware_url, "main.py")
+ota_updater1 = OTAUpdater(firmware_url, "percentage.html")
 # Setup the Temp sensors
 #ds = ds18x20.DS18X20(onewire.OneWire(Pin(21)))
 #temp_sensors = ds.scan()
@@ -115,6 +114,8 @@ def ota_function(ota_btn):
         oled.text(f"Updating", 0, 20)
         oled.show()
         ota_updater.download_and_install_update_if_available()
+        time.sleep(2)
+        ota_updater1.download_and_install_update_if_available()
         
         
 screen_btn.irq(trigger=screen_btn.IRQ_RISING, handler=oled_button)
@@ -125,7 +126,10 @@ while True:
         server.stop()
         server.try_connect()
     read_sensor()
-    #read_temp() 
+    ##read_temp() 
     server.process_all(pitch, roll, tilt)
     oled_process()
     time.sleep(0.5)
+
+
+#V2

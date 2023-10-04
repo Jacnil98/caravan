@@ -93,10 +93,9 @@ class OTAUpdater:
 
         print('Checking for latest version...')
         headers = {"accept": "application/json"} 
-        response = urequests.get(self.version_url, headers=headers)
+        response = urequests.get(url=self.version_url, headers=headers)
         
         data = json.loads(response.text)
-       
         self.latest_version = data['oid']                   # Access directly the id managed by GitHub
         print(f'latest version is: {self.latest_version}')
         

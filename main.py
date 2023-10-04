@@ -125,7 +125,7 @@ while True:
         server.stop()
         server.try_connect()
     read_sensor()
-    #read_temp() 
+    ##read_temp() 
     server.process_all(pitch, roll, tilt)
     oled_process()
     time.sleep(0.5)

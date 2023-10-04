@@ -48,7 +48,7 @@ screen_btn = Pin(18, Pin.IN, Pin.PULL_DOWN)
 ota_btn = Pin(22, Pin.IN, Pin.PULL_DOWN)
 # Setup the server
 server = AppServer(ssid, password)
-ota_updater = OTAUpdater(firmware_url, "main.py")
+ota_updater = OTAUpdater(ssid, password, firmware_url, "main.py")
 # Setup the Temp sensors
 #ds = ds18x20.DS18X20(onewire.OneWire(Pin(21)))
 #temp_sensors = ds.scan()

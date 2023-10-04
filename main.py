@@ -14,7 +14,7 @@ from ota import OTAUpdater
 # Define the Wi-Fi network SSID and password
 ssid = 'Jacob'
 password = 'Direstraits'
-firmware_url = "https://raw.githubusercontent.com/Jacnil98/caravan/main"
+firmware_url = "https://raw.githubusercontent.com/Jacnil98/caravan/main/"
 # Defines pixels on OLED display
 oled_width = 128
 oled_height = 64

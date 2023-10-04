@@ -81,7 +81,7 @@ def oled_process():
     oled.text(f" {server.ip}", 0,0)
     oled.text(f"VH:{pitch}", 0, 10)
     oled.text(f"FB:{roll}", 0, 20)
-    oled.text(f"Kloss: {kloss_calc(tilt)} {fabs(tilt)}CM", 0, 30)
+    oled.text(f"Kloss: {kloss_calc(tilt)} {int(fabs(tilt))}CM", 0, 30)
     oled.text(f"Temp Out: {out_temp}", 0, 40)
     oled.text(f"Temp In: {in_temp}", 0, 50)
     oled.show()

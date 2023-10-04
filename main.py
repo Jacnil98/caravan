@@ -129,3 +129,6 @@ while True:
     server.process_all(pitch, roll, tilt)
     oled_process()
     time.sleep(0.5)
+
+
+#Ota updated!!!!

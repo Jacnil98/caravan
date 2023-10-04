@@ -60,10 +60,6 @@
             <div class="line-outer line-outer-roll"></div>
             <div class="text text-roll"></div>
         </div>
-        <div class="line-container">
-            <div class="line-outer line-outer-roll"></div>
-            <div class="text text-tilt"></div>
-        </div>
     </div>
 
 <script>
@@ -71,14 +67,25 @@
     var pitchText = document.querySelector(".text-pitch");
     var rollText = document.querySelector(".text-roll");
     var tiltText = document.querySelector(".text-tilt");
+
     ws.onmessage = function (evt) {
         var pitch = parseFloat(evt.data.split(',')[0]);
         var roll = parseFloat(evt.data.split(',')[1]);
         var tilt = parseFloat(evt.data.split(',')[2]);
+        var kloss_symbol;
+        
+        if (tilt == 0) {
+            kloss_symbol = " ";
+        }
+        else if (tilt < 0) {
+            kloss_symbol = "<";
+        } else {
+            kloss_symbol = ">";
+        }
+
         // Update pitch and roll text
-        pitchText.innerText = "Vänster-Höger: \n" + pitch.toFixed(2);
-        rollText.innerText = "Fram-Bak: \n" + roll.toFixed(2);
-        tiltText.innerText = "Tilt: \n" + tilt.toFixed(2);
+        pitchText.innerText = "Vänster-Höger: \n" + pitch + "°\n" + kloss_symbol + Math.abs(tilt) + " Cm";
+        rollText.innerText = "Fram-Bak: \n" + roll + "°";
 
         // Update pitch and roll text color
         if (pitch >= -2 && pitch <= 2) {
@@ -94,9 +101,7 @@
         }
 
         // Update line rotation
-        //document.querySelector(".line:nth-of-type(1)").style.transform = "rotate(" + pitch + "deg)";
         document.querySelector(".line-outer-pitch").style.transform = "rotate(" + pitch + "deg)";
-        //document.querySelector(".line:nth-of-type(2)").style.transform = "rotate(" + roll + "deg)";
         document.querySelector(".line-outer-roll").style.transform = "rotate(" + roll + "deg)";
 
         // Update line color
@@ -105,6 +110,7 @@
         } else {
             document.querySelector(".line-outer-pitch").classList.remove("line-green");
         }
+
         // Update line color
         if (roll >= -2 && roll <= 2) {
             document.querySelector(".line-outer-roll").classList.add("line-green");

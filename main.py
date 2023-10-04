@@ -63,9 +63,9 @@ def read_sensor():
         accel_z = imu.accel.z
 
         # Calculate pitch and roll angles from the accelerometer data
-        roll = (atan(-accel_x / accel_z) * 180.0 / pi) - 1
-        pitch = atan(accel_y / sqrt(pow(accel_x, 2) + pow(accel_z, 2))) * 180.0 / pi
-        tilt = atan(pitch * pi / 180.0) * caravan_lenght
+        roll = round((atan(-accel_x / accel_z) * 180.0 / pi) - 1, 1)
+        pitch = round(atan(accel_y / sqrt(pow(accel_x, 2) + pow(accel_z, 2))) * 180.0 / pi,1)
+        tilt = round(atan(pitch * pi / 180.0) * caravan_lenght,0)
     except ZeroDivisionError:
             pass
 
@@ -79,9 +79,9 @@ def read_temp():
 def oled_process():
     oled.fill(0)
     oled.text(f" {server.ip}", 0,0)
-    oled.text(f"VH:{round(pitch,1)}", 0, 10)
-    oled.text(f"FB:{round(roll,1)}", 0, 20)
-    oled.text(f"Kloss: {kloss_calc(int(tilt))} {int(fabs(tilt))}CM", 0, 30)
+    oled.text(f"VH:{pitch}", 0, 10)
+    oled.text(f"FB:{roll}", 0, 20)
+    oled.text(f"Kloss: {kloss_calc(tilt)} {fabs(tilt)}CM", 0, 30)
     oled.text(f"Temp Out: {out_temp}", 0, 40)
     oled.text(f"Temp In: {in_temp}", 0, 50)
     oled.show()
@@ -130,6 +130,5 @@ while True:
     server.process_all(pitch, roll, tilt)
     oled_process()
     time.sleep(0.5)
-
 
 #V2

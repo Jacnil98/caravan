@@ -123,6 +123,7 @@ class AppServer(WebSocketServer):
         wlan = network.WLAN(network.STA_IF)
         wlan.active(True)
         wlan.connect(self.ssid, self.password)
+        wlan.config(pm = 0xa11140)
         self.start(3000)
         # Wait until the Wi-Fi connection is established
         while True:

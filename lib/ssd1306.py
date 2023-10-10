@@ -2,6 +2,8 @@
 
 from micropython import const
 import framebuf
+from math import fabs
+import time
 
 
 # register definitions
@@ -108,6 +110,8 @@ class SSD1306_I2C(SSD1306):
         self.temp = bytearray(2)
         self.write_list = [b"\x40", None]  # Co=0, D/C#=1
         super().__init__(width, height, external_vcc)
+        self.btn_toggle = 0
+        self.btn_debounce_time = 0
 
     def write_cmd(self, cmd):
         self.temp[0] = 0x80  # Co=1, D/C#=0
@@ -117,8 +121,40 @@ class SSD1306_I2C(SSD1306):
     def write_data(self, buf):
         self.write_list[1] = buf
         self.i2c.writevto(self.addr, self.write_list)
-
-
+        
+    def process(self, server, imu, out_temp, in_temp):
+        self.fill(0)
+        self.text(f" {server.ip}", 0,0)
+        self.text(f"VH:{imu.pitch}", 0, 10)
+        self.text(f"FB:{imu.roll}", 0, 20)
+        self.text(f"Kloss: {self.kloss_calc(imu.tilt)} {int(fabs(imu.tilt))}CM", 0, 30)
+        self.text(f"Temp Out: {out_temp}", 0, 40)
+        self.text(f"Temp In: {in_temp}", 0, 50)
+        self.show()
+    
+    def kloss_calc(self, tilt):
+        if tilt == 0:
+            return "="
+        elif tilt > 0:
+            return "<-"
+        else:
+            return "->"
+        
+    def btn_func(self, btn):
+        self.btn_toggle = not self.btn_toggle
+        if((time.ticks_ms()-self.btn_debounce_time) > 200):
+            self.btn_debounce_time=time.ticks_ms()
+            if self.btn_toggle:
+                self.poweroff()
+            else:
+                self.poweron()
+    
+    def update(self):
+        self.fill(0)
+        self.show()
+        self.text(f"Updating", 0, 20)
+        self.show()
+    
 class SSD1306_SPI(SSD1306):
     def __init__(self, width, height, spi, dc, res, cs, external_vcc=False):
         self.rate = 10 * 1024 * 1024

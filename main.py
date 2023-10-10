@@ -9,7 +9,7 @@ from ws_server import AppServer
 from ota import OTAUpdater
 from secrets import SSID, PASSWORD
 
-version = "2.1"
+version = 2.1
 firmware_url = "https://raw.githubusercontent.com/Jacnil98/caravan/main/"
 # Defines pixels on OLED display
 oled_width = 128
@@ -70,8 +70,8 @@ def read_temp():
         in_temp = round(ds.read_temp(temp_sensors[1]), 1)
         ds.convert_temp()
     except:
-        out_temp = "Err"
-        in_temp = "Err"
+        out_temp = 0
+        in_temp = 0
 
 def ota_updater(ota_btn):
     main_file.update(ota_btn)
@@ -88,7 +88,7 @@ while True:
         imu.read_sensor(caravan_width)
     if(temp_connected == True):
         read_temp()
-    server.process_all(imu.pitch, imu.roll, imu.tilt)
+    server.process_all(imu.pitch, imu.roll, imu.tilt, in_temp, out_temp, version)
     if(oled_connected == True):
         oled.process(server, imu, out_temp, in_temp)
     time.sleep(0.5)

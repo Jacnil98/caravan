@@ -93,9 +93,9 @@ class WebSocketServer:
         self._setup_conn(port, self._accept_conn)
         #print("Started WebSocket server.")
 
-    def process_all(self, pitch, roll, tilt):
+    def process_all(self, pitch, roll, tilt, in_temp, out_temp, version):
         for client in self._clients:
-            client.process(pitch, roll, tilt)
+            client.process(pitch, roll, tilt, in_temp, out_temp, version)
 
     def send_something(self):
         for client in self._clients:
@@ -136,6 +136,6 @@ class ValueGenerator(WebSocketClient):
     def __init__(self, conn):
         super().__init__(conn)
 
-    def process(self, pitch, roll, tilt):
+    def process(self, pitch, roll, tilt, in_temp, out_temp, version):
         # Write the pitch and roll angles to the WebSocket connection
-        self.connection.write("{:.1f},{:.1f},{:.0f}".format(pitch, roll, tilt))
+        self.connection.write("{:.1f},{:.1f},{:.0f},{:.0f},{:.0f},{:.0f}".format(pitch, roll, tilt, in_temp, out_temp, version))

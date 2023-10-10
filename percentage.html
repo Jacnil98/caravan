@@ -93,19 +93,20 @@
     
     </div>
     <div class="temp-section">
-    <h1 class="temp-text">Temperatur:</h1>
-    <h1 class="temp"> Inomvagn: 10 </h1>
-    <div class="temp-text"></div>
-    <h2 class="temp"> Utomvagn: 10 </h2>
+    <h1 class="temp-text">Temperatur</h1>
+    <h1 class="temp"> Inomvagn: </h1>
+    <div class="text text-in_temp">in_temp</div>
+    <h2 class="temp"> Utomvagn: </h2>
+    <div class="text text-out_temp">out_temp</div>
     </div>
     <div class="container"> 
         <div class="line-container">
             <div class="line-outer line-outer-pitch"></div>
-            <div class="text text-pitch"> 2</div>
+            <div class="text text-pitch">pitch</div>
         </div>
         <div class="line-container">
             <div class="line-outer line-outer-roll"></div>
-            <div class="text text-roll"> 10 </div>
+            <div class="text text-roll">roll</div>
         </div>
     </div>
 
@@ -114,11 +115,16 @@
     var pitchText = document.querySelector(".text-pitch");
     var rollText = document.querySelector(".text-roll");
     var tiltText = document.querySelector(".text-tilt");
-
+    var in_tempText = document.querySelector(".text-in_temp");
+    var out_tempText = document.querySelector(".text-out_temp");
+    
     ws.onmessage = function (evt) {
         var pitch = parseFloat(evt.data.split(',')[0]);
         var roll = parseFloat(evt.data.split(',')[1]);
         var tilt = parseFloat(evt.data.split(',')[2]);
+        var in_temp = parseFloat(evt.data.split(',')[3]);
+        var out_temp = parseFloat(evt.data.split(',')[4]);
+        var version = parseFloat(evt.data.split(',')[5]);
         var kloss_symbol;
         
         if (tilt == 0) {
@@ -133,7 +139,10 @@
         // Update pitch and roll text
         pitchText.innerText = "Vänster-Höger: \n" + pitch + "°\n" + kloss_symbol + Math.abs(tilt) + " Cm";
         rollText.innerText = "Fram-Bak: \n" + roll + "°";
-
+        
+        out_tempText.innerText = out_temp + "°C";
+        in_tempText.innerText = in_temp + "°C";
+        
         // Update pitch and roll text color
         if (pitch >= -2 && pitch <= 2) {
             pitchText.classList.add("text-green");

@@ -40,6 +40,7 @@ THE SOFTWARE.
 from utime import sleep_ms
 from machine import I2C
 from vector3d import Vector3d
+from math import sqrt, atan, pow, pi
 
 
 class MPUException(OSError):
@@ -78,6 +79,9 @@ class MPU6050(object):
         self.buf2 = bytearray(2)                # be done in interrupt handlers
         self.buf3 = bytearray(3)
         self.buf6 = bytearray(6)
+        self.tilt = 0
+        self.pitch = 0
+        self.roll = 0
 
         sleep_ms(200)                           # Ensure PSU and device have settled
         if isinstance(side_str, str):           # Non-pyb targets may use other than X or Y
@@ -124,6 +128,21 @@ class MPU6050(object):
         self.buf1[0] = data
         self._mpu_i2c.writeto_mem(addr, memaddr, self.buf1)
 
+    def read_sensor(self, caravan_width):
+        try:
+            # Read accelerometer data from the sensor
+            accel_x = self.accel.x
+            accel_y = self.accel.y
+            accel_z = self.accel.z
+
+            # Calculate pitch and roll angles from the accelerometer data
+            self.roll = round((atan(-accel_x / accel_z) * 180.0 / pi) - 1, 1)
+            self.pitch = round(atan(accel_y / sqrt(pow(accel_x, 2) + pow(accel_z, 2))) * 180.0 / pi,1)
+            self.tilt = round(atan(self.pitch * pi / 180.0) * caravan_width,0)
+            return self.roll, self.pitch, self.tilt
+        except ZeroDivisionError:
+                pass
+    
     # wake
     def wake(self):
         '''

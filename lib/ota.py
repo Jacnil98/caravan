@@ -3,13 +3,15 @@ import urequests
 import os
 import json
 import machine
-from time import sleep
+import time
 
 class OTAUpdater:
     """ This class handles OTA updates. It connects to the Wi-Fi, checks for updates, downloads and installs them."""
-    def __init__(self, repo_url, filename):
+    def __init__(self, repo_url, filename, oled):
         self.filename = filename
         self.repo_url = repo_url
+        self.btn_debounce_time = 0
+        self.oled = oled
 
         # self.version_url = repo_url + 'main/version.json'                 # Replacement of the version mechanism by Github's oid
         self.version_url = self.process_version_url(repo_url, filename)     # Process the new version url
@@ -113,3 +115,12 @@ class OTAUpdater:
                 self.update_and_reset()
         else:
             print('No new updates available.')
+            
+            
+    def update(self,ota_btn):
+        global ota_btn_debounce_time
+        if((time.ticks_ms()-self.btn_debounce_time) > 200):
+            self.btn_debounce_time=time.ticks_ms()
+            self.oled.update()
+            self.download_and_install_update_if_available()
+            time.sleep(2)

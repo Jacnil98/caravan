@@ -138,4 +138,4 @@ class ValueGenerator(WebSocketClient):
 
     def process(self, pitch, roll, tilt, in_temp, out_temp, version):
         # Write the pitch and roll angles to the WebSocket connection
-        self.connection.write("{:.1f},{:.1f},{:.0f},{:.0f},{:.0f},{:.0f}".format(pitch, roll, tilt, in_temp, out_temp, version))
+        self.connection.write("{:.1f},{:.1f},{:.0f},{:.0f},{:.0f},{:.1f}".format(pitch, roll, tilt, in_temp, out_temp, version))

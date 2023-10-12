@@ -23,11 +23,12 @@
             -webkit-text-stroke-color: red;
         }
         .temp-section{
-            border: 6px solid rgb(130, 126, 126);
+            border: 6px solid black;
             border-radius: 1rem;
             position: relative;
-            margin-left: 20rem;
-            margin-right: 20rem;
+            margin-left: 15rem;
+            margin-right: 15rem;
+            color: black;
 
         }
         .temp-text{
@@ -36,17 +37,19 @@
             font-size: 3rem;
         }
         .temp{
+            margin-left: 1rem;
             font-size: 3rem;
             display: flex;
             justify-content: center;
         }
         .container{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        padding: 0;
-        width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 0;
+            width: 100%;
+            color: black;
         }
         .line-container {
             width: 45rem;
@@ -56,8 +59,8 @@
             margin: 5rem;
             padding: 10rem;
             border-radius: 10rem;
-           box-shadow: 1px 1px 40px 20px rgb(99, 227, 99);
-           background-color: rgb(249, 249, 249);
+            box-shadow: 1px 1px 40px 20px rgb(128, 128, 128);
+            background-color: rgb(249, 249, 249);
         }
 
         .line-outer {
@@ -73,7 +76,16 @@
         .line-green {
             background-color: green;
         }
-
+        
+        .border-green {
+            border: 6px solid green;
+            box-shadow: 1px 1px 40px 20px rgb(99, 227, 99);
+        }
+        .small_text{
+            display: flex;
+            font-size: 40px;
+            margin-left: 1rem;
+        }
         .text {
             font-size: 50px;
             text-align: center;
@@ -88,27 +100,29 @@
     </style>
 </head>
 <body>
+    
     <div class="header-section">
     <h1 class="header">Kabe</h1>
-    
     </div>
+    
     <div class="temp-section">
     <h1 class="temp-text">Temperatur</h1>
-    <h1 class="temp"> Inomvagn: </h1>
-    <div class="text text-in_temp">in_temp</div>
-    <h2 class="temp"> Utomvagn: </h2>
-    <div class="text text-out_temp">out_temp</div>
+    <h1 class="temp"> Inomvagn:  <div class="temp text-in_temp"> in_temp</div> </h1>
+    <h2 class="temp"> Utomvagn: <div class="temp text-out_temp"> out_temp</div> </h2>
     </div>
+    
     <div class="container"> 
-        <div class="line-container">
+        <div class="line-container container-pitch">
             <div class="line-outer line-outer-pitch"></div>
             <div class="text text-pitch">pitch</div>
         </div>
-        <div class="line-container">
+        <div class="line-container container-roll">
             <div class="line-outer line-outer-roll"></div>
             <div class="text text-roll">roll</div>
         </div>
     </div>
+    <h1 class="small_text"> Version: <div class="small_text text-version"> version</div> </h1>
+
 
 <script>
     var ws = new WebSocket("ws://" + location.hostname + ":3000");
@@ -117,6 +131,7 @@
     var tiltText = document.querySelector(".text-tilt");
     var in_tempText = document.querySelector(".text-in_temp");
     var out_tempText = document.querySelector(".text-out_temp");
+    var versionText = document.querySelector(".text-version");
     
     ws.onmessage = function (evt) {
         var pitch = parseFloat(evt.data.split(',')[0]);
@@ -142,37 +157,32 @@
         
         out_tempText.innerText = out_temp + "°C";
         in_tempText.innerText = in_temp + "°C";
+        versionText.innerText = version;
         
         // Update pitch and roll text color
         if (pitch >= -2 && pitch <= 2) {
             pitchText.classList.add("text-green");
+            document.querySelector(".line-outer-pitch").classList.add("line-green");
+            document.querySelector(".container-pitch").classList.add("border-green");
         } else {
             pitchText.classList.remove("text-green");
+            document.querySelector(".line-outer-pitch").classList.remove("line-green");
+            document.querySelector(".container-pitch").classList.remove("border-green");
         }
 
         if (roll >= -2 && roll <= 2) {
             rollText.classList.add("text-green");
+            document.querySelector(".line-outer-roll").classList.add("line-green");
+            document.querySelector(".container-roll").classList.add("border-green");
         } else {
             rollText.classList.remove("text-green");
+            document.querySelector(".line-outer-roll").classList.remove("line-green");
+            document.querySelector(".container-roll").classList.remove("border-green");
         }
 
         // Update line rotation
         document.querySelector(".line-outer-pitch").style.transform = "rotate(" + pitch + "deg)";
         document.querySelector(".line-outer-roll").style.transform = "rotate(" + roll + "deg)";
-
-        // Update line color
-        if (pitch >= -2 && pitch <= 2) {
-            document.querySelector(".line-outer-pitch").classList.add("line-green");
-        } else {
-            document.querySelector(".line-outer-pitch").classList.remove("line-green");
-        }
-
-        // Update line color
-        if (roll >= -2 && roll <= 2) {
-            document.querySelector(".line-outer-roll").classList.add("line-green");
-        } else {
-            document.querySelector(".line-outer-roll").classList.remove("line-green");
-        }
     };
 </script>
 </body>

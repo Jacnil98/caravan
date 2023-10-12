@@ -46,15 +46,17 @@ pin.value(0) #set GPIO16 low to reset OLED
 pin.value(1) #while OLED is running, must set GPIO16 in high
 
 # Defines ON/OFF button to the OLED screen
-screen_btn = Pin(18, Pin.IN, Pin.PULL_DOWN)
+extra_btn = Pin(18, Pin.IN, Pin.PULL_DOWN)
+screen_btn = Pin(19, Pin.IN, Pin.PULL_DOWN)
 ota_btn = Pin(22, Pin.IN, Pin.PULL_DOWN)
 
 # Setup the server
 server = AppServer(SSID, PASSWORD)
 
 # Setup Ota classes
-main_file = OTAUpdater(firmware_url, "main.py", oled)
-html_file = OTAUpdater(firmware_url, "percentage.html", oled)
+if oled_connected == True:
+    main_file = OTAUpdater(firmware_url, "main.py", oled)
+    html_file = OTAUpdater(firmware_url, "percentage.html", oled)
 
 # Setup the Temp sensors
 temp_connected = True
@@ -78,7 +80,8 @@ def ota_updater(ota_btn):
     html_file.update(ota_btn)
 
 screen_btn.irq(trigger=screen_btn.IRQ_RISING, handler=oled.btn_func)
-ota_btn.irq(trigger=ota_btn.IRQ_RISING, handler=ota_updater)
+if oled_connected == True:
+    ota_btn.irq(trigger=ota_btn.IRQ_RISING, handler=ota_updater)
 
 while True:
     if(server.ip) == "0.0.0.0":
@@ -91,6 +94,6 @@ while True:
     server.process_all(imu.pitch, imu.roll, imu.tilt, in_temp, out_temp, version)
     if(oled_connected == True):
         oled.process(server, imu, out_temp, in_temp)
-    time.sleep(0.5)
+    time.sleep(0.3)
 
 print(version)
